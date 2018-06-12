@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">RouteTracking</string>
+
+    <!--      LOGIN     -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="please_enter_e_mail">Please enter E-Mail.</string>
+    <string name="invalid_email">Invalid E-Mail</string>
+    <string name="please_enter_password">Please enter Password</string>
+
+
+    <!--    HOME   -->
+    <string name="start_new_route">Start New Route</string>
+    <string name="view_saved_route">View saved Route</string>
+    <string name="settings">Settings</string>
+
+
+    <!--NEW ROUTE -->
+    <string name="start_tracking">Start Tracking</string>
+    <string name="stop_tracking">Stop Tracking</string>
+
+    <!--SETTINGS-->
+
+    <string name="button_pick">Pick color</string>
+    <string name="button_settings">button_settings</string>
+
+
+    <!--ALERT BOX-->
+    <string name="enter_route_name">Enter Route Name</string>
+    <string name="title_activity_rout_track">Map</string>
+    <string name="unable_to_access_the_Location">Unable to access the location</string>
+    <string name="to_enable_access_go_to_Settings_Privacy_location_services_and_turn_on_location_access_for_this_app">
+        To enable access, go to Settings > Data protection > Location services and turn on Location access for Homecheck.</string>
+    <string name="ok">OK</string>
+    <string name="title_activity_saved_route">Map</string>
+</resources>

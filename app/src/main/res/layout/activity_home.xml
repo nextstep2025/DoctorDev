@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="24dp"
+    android:layout_marginStart="24dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".Home">
+
+
+    <Button
+        android:id="@+id/start_new_route"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_new_route" />
+
+
+    <Button
+        android:id="@+id/view_saved_route"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/view_saved_route" />
+
+
+    <Button
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings" />
+</LinearLayout>
