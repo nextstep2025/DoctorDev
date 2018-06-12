@@ -62,6 +62,8 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
     private ArrayList<LatLng> points;
     Polyline line;
     private boolean isTracking = false;
+    private Location coordPrevious, coordNext;
+    private float distanceBetweenCoord = 0;
     /**
      * Code used in requesting runtime permissions.
      */
@@ -118,6 +120,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
     //request location only ones
     private boolean mRequestingLocationUpdates;
     private int polyLineColor;
+    private float distance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -430,6 +433,18 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
             mMap.clear();
 
 
+            coordNext = new Location("");
+            coordNext.setLatitude(mCurrentLocation.getLatitude());
+            coordNext.setLongitude(mCurrentLocation.getLongitude());
+
+
+            if (coordPrevious != null && coordNext != null) {
+
+                distanceBetweenCoord = coordPrevious.distanceTo(coordNext);
+                distance = distance + distanceBetweenCoord;
+                coordPrevious = coordNext;
+            }
+
             LatLng loca = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -447,15 +462,24 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loca, 15));
 
-            if (isTracking) {
-
-                Coordinates coordinates = new Coordinates(routeId, loca.latitude, loca.longitude);
-                coordinates.save();
-                points.add(loca);
-
-                redrawLine();
-
-            }
+//            if (isTracking) {
+//
+//
+//                coordPrevious = new Location("");
+//                coordPrevious.setLatitude(mCurrentLocation.getLatitude());
+//                coordPrevious.setLongitude(mCurrentLocation.getLatitude());
+//
+//                coordNext = null;
+//                distanceBetweenCoord = 0;
+//
+//
+//                Coordinates coordinates = new Coordinates(routeId, loca.latitude, loca.longitude);
+//                coordinates.save();
+//                points.add(loca);
+//
+//                redrawLine();
+//
+//            }
 
 
         }
@@ -498,6 +522,27 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                 isTracking = true;
                 Constant.STARTTRACKTIME = Constant.getCurrentDatenTime();
                 //  System.out.println("Date"+Constant.getCurrentDatenTime());
+
+
+                if (isTracking) {
+
+
+                    coordPrevious = new Location("");
+                    coordPrevious.setLatitude(mCurrentLocation.getLatitude());
+                    coordPrevious.setLongitude(mCurrentLocation.getLongitude());
+
+                    coordNext = null;
+                    distanceBetweenCoord = 0;
+
+
+                    LatLng loca = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                    Coordinates coordinates = new Coordinates(routeId, loca.latitude, loca.longitude);
+                    coordinates.save();
+                    points.add(loca);
+
+                    redrawLine();
+
+                }
 
 
             }
