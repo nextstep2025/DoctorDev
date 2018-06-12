@@ -48,9 +48,6 @@ public class Home extends AppCompatActivity {
         viewSavedRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
                 Intent goToSavedRoutes = new Intent(Home.this, SavedRoutes.class);
                 startActivity(goToSavedRoutes);
             }
@@ -59,8 +56,13 @@ public class Home extends AppCompatActivity {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent goToSettings = new Intent(Home.this, Settings.class);
                 startActivity(goToSettings);
+
+               //  Constant.getTimeDifference();
+
+
 
             }
         });

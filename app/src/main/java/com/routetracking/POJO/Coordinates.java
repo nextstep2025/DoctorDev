@@ -9,6 +9,7 @@ public class Coordinates extends SugarRecord {
     private long route_id;
     private double latitude,longitude;
 
+
     public Coordinates() {
     }
 
@@ -41,4 +42,6 @@ public class Coordinates extends SugarRecord {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+
 }

@@ -45,8 +45,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.routetracking.POJO.Coordinates;
+import com.routetracking.POJO.Routes;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.os.Build.VERSION_CODES.M;
 
@@ -493,6 +496,9 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View view) {
 
                 isTracking = true;
+                Constant.STARTTRACKTIME = Constant.getCurrentDatenTime();
+                //  System.out.println("Date"+Constant.getCurrentDatenTime());
+
 
             }
         });
@@ -504,10 +510,52 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                 isTracking = false;
 
 
+                Constant.ENDTRACKTIME = Constant.getCurrentDatenTime();
+
                 if (mFusedLocationClient != null) {
                     mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                 }
                 stopLocationUpdates();
+
+
+                String dateStart = Constant.STARTTRACKTIME;
+                String dateStop = Constant.ENDTRACKTIME;
+
+                //HH converts hour in 24 hours format (0-23), day calculation
+                SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+                Date d1 = null;
+                Date d2 = null;
+
+
+                long diffSeconds = 0;
+                try {
+                    d1 = format.parse(dateStart);
+                    d2 = format.parse(dateStop);
+
+                    //in milliseconds
+                    long diff = d2.getTime() - d1.getTime();
+
+                    diffSeconds = diff / 1000 % 60;
+                    long diffMinutes = diff / (60 * 1000) % 60;
+                    long diffHours = diff / (60 * 60 * 1000) % 24;
+                    long diffDays = diff / (24 * 60 * 60 * 1000);
+
+                    System.out.print(diffDays + " days, ");
+                    System.out.print(diffHours + " hours, ");
+                    System.out.print(diffMinutes + " minutes, ");
+                    System.out.print(diffSeconds + " seconds.");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                Routes finalRouteTimings = Routes.findById(Routes.class, routeId);
+                finalRouteTimings.setStartTrackTime(Constant.STARTTRACKTIME);  // modify the values
+                finalRouteTimings.setEndTrackTime(Constant.ENDTRACKTIME);
+                finalRouteTimings.setTimeDiff(String.valueOf(diffSeconds));
+                finalRouteTimings.save(); // updates the previous entry with new values.
+
             }
         });
     }
