@@ -29,6 +29,10 @@ public class Constant {
 
     }
 
+    public static Double getFloatAsDouble(Float fValue) {
+        return Double.valueOf(fValue.toString());
+    }
+
 //    public static void getTimeDifference(){
 //
 ////        String dateStart = Constant.STARTTRACKTIME;

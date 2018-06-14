@@ -47,6 +47,7 @@ import com.google.android.gms.tasks.Task;
 import com.routetracking.POJO.Coordinates;
 import com.routetracking.POJO.Routes;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,6 +135,10 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(RoutTrackActivity.this);
         polyLineColor = prefs.getInt("polylinecolor", 0);
+
+        if (polyLineColor == 0) {
+            polyLineColor = ContextCompat.getColor(this, R.color.colorPrimary);
+        }
 
         routeId = getIntent().getLongExtra("route_id", 0);
 
@@ -442,6 +447,10 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
                 distanceBetweenCoord = coordPrevious.distanceTo(coordNext);
                 distance = distance + distanceBetweenCoord;
+                Toast.makeText(RoutTrackActivity.this, "Distance Covered:"
+                                + new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))
+                                +" meters", Toast.LENGTH_SHORT).show();
+
                 coordPrevious = coordNext;
             }
 
@@ -462,24 +471,25 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loca, 15));
 
-//            if (isTracking) {
-//
-//
+            if (isTracking) {
+
+
 //                coordPrevious = new Location("");
 //                coordPrevious.setLatitude(mCurrentLocation.getLatitude());
 //                coordPrevious.setLongitude(mCurrentLocation.getLatitude());
-//
-//                coordNext = null;
-//                distanceBetweenCoord = 0;
-//
-//
-//                Coordinates coordinates = new Coordinates(routeId, loca.latitude, loca.longitude);
-//                coordinates.save();
-//                points.add(loca);
-//
-//                redrawLine();
-//
-//            }
+
+                //   coordNext = null;
+                //  distanceBetweenCoord = 0;
+
+
+                Coordinates coordinates = new Coordinates(routeId, coordPrevious.getLatitude(), coordPrevious.getLongitude());
+                coordinates.save();
+                LatLng latestLoca = new LatLng(coordPrevious.getLatitude(), coordPrevious.getLongitude());
+                points.add(latestLoca);
+
+                redrawLine();
+
+            }
 
 
         }
@@ -527,6 +537,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                 if (isTracking) {
 
 
+                    //1st location
                     coordPrevious = new Location("");
                     coordPrevious.setLatitude(mCurrentLocation.getLatitude());
                     coordPrevious.setLongitude(mCurrentLocation.getLongitude());
@@ -534,13 +545,13 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                     coordNext = null;
                     distanceBetweenCoord = 0;
 
-
-                    LatLng loca = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-                    Coordinates coordinates = new Coordinates(routeId, loca.latitude, loca.longitude);
-                    coordinates.save();
-                    points.add(loca);
-
-                    redrawLine();
+//
+//                    LatLng loca = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+//                    Coordinates coordinates = new Coordinates(routeId, loca.latitude, loca.longitude);
+//                    coordinates.save();
+//                    points.add(loca);
+//
+//                    redrawLine();
 
                 }
 
