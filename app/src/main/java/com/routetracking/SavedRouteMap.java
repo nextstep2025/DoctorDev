@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -41,6 +42,9 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SavedRouteMap.this);
         polyLineColor = prefs.getInt("polylinecolor", 0);
+        if (polyLineColor == 0) {
+            polyLineColor = ContextCompat.getColor(this, R.color.colorPrimary);
+        }
 
         savedMapPoints = new ArrayList<LatLng>();
 

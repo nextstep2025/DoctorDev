@@ -57,7 +57,7 @@ import static android.os.Build.VERSION_CODES.M;
 public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
-    private Button startTrack, stopTrack;
+    private Button startTrack, stopTrack,distCovered;
     private String TAG = "ROUTE TRACKING ";
     private long routeId;
     private ArrayList<LatLng> points;
@@ -146,6 +146,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
         startTrack = findViewById(R.id.start_track);
         stopTrack = findViewById(R.id.stop_track);
+        distCovered = findViewById(R.id.distCovered);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
@@ -447,9 +448,13 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
                 distanceBetweenCoord = coordPrevious.distanceTo(coordNext);
                 distance = distance + distanceBetweenCoord;
-                Toast.makeText(RoutTrackActivity.this, "Distance Covered:"
-                                + new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))
-                                +" meters", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(RoutTrackActivity.this, "Distance Covered:"
+//                                + new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))
+//                                +" meters", Toast.LENGTH_SHORT).show();
+
+
+                distCovered.setText(String.format("Distance Covered:%s meters"
+                                    , new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))));
 
                 coordPrevious = coordNext;
             }
@@ -497,7 +502,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
     private void redrawLine() {
 
-        if (isTracking) {
+
 
             mMap.clear();  //clears all Markers and Polylines
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -519,7 +524,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
             // addMarker(); //add Marker in current position
             line = mMap.addPolyline(options); //add Polyline
 
-        }
+
     }
 
 
@@ -611,6 +616,10 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                 finalRouteTimings.setEndTrackTime(Constant.ENDTRACKTIME);
                 finalRouteTimings.setTimeDiff(String.valueOf(diffSeconds));
                 finalRouteTimings.save(); // updates the previous entry with new values.
+
+
+                redrawLine();
+                System.out.println(points.size());
 
             }
         });

@@ -53,7 +53,7 @@ public class SavedRoutes extends AppCompatActivity {
 
     private void setupRecyclerView() {
 
-        ///  System.out.println("catagoryData.size() = " + catagoryData.size());
+        //get all saved route data
         routeData = Routes.listAll(Routes.class);
 
         adapter = new RouteAdapter(routeData, this);
@@ -62,7 +62,7 @@ public class SavedRoutes extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
 
-                System.out.println("id"+routeData.get(position).getId());
+              ///  System.out.println("id"+routeData.get(position).getId());
 
                 Intent goToSaveRouteMap = new Intent(SavedRoutes.this, SavedRouteMap.class);
                 goToSaveRouteMap.putExtra("route_id",routeData.get(position).getId());
