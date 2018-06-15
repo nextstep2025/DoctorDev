@@ -33,6 +33,17 @@
     </TableRow>
 
     <Button
+        android:id="@+id/speed"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_above="@+id/distCovered"
+        android:fontFamily="sans-serif"
+        android:layout_alignParentEnd="true"
+        android:text="00" />
+
+    <Button
         android:id="@+id/distCovered"
         style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"

@@ -2,6 +2,7 @@ package com.routetracking;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -56,7 +57,7 @@ import static android.os.Build.VERSION_CODES.M;
 public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
-    private Button startTrack, stopTrack,distCovered;
+    private Button startTrack, stopTrack, distCovered,speedCovered;
     private String TAG = "ROUTE TRACKING ";
     private long routeId;
     private ArrayList<LatLng> points;
@@ -64,6 +65,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
     private boolean isTracking = false;
     private Location coordPrevious, coordNext;
     private float distanceBetweenCoord = 0;
+    private long lastTime, timeSinceLastMovement;
     /**
      * Code used in requesting runtime permissions.
      */
@@ -121,6 +123,10 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
     private boolean mRequestingLocationUpdates;
     private int polyLineColor;
     private float distance = 0;
+    private long currentTime;
+    private float lastDistance;
+    private long time;
+    private float speed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,14 +147,17 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
         routeId = getIntent().getLongExtra("route_id", 0);
 
-     //   System.out.println("routeId = " + routeId);
+        //   System.out.println("routeId = " + routeId);
 
         startTrack = findViewById(R.id.start_track);
         stopTrack = findViewById(R.id.stop_track);
         distCovered = findViewById(R.id.distCovered);
+        speedCovered = findViewById(R.id.speed);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
+
+        currentTime = lastTime = System.currentTimeMillis();
 
         // Kick off the process of building the LocationCallback, LocationRequest, and
         // LocationSettingsRequest objects.
@@ -331,6 +340,9 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                 super.onLocationResult(locationResult);
 
                 mCurrentLocation = locationResult.getLastLocation();
+
+
+
                 updateLocationData();
             }
         };
@@ -360,6 +372,9 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                     @Override
                     public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                         Log.i(TAG, "All location settings are satisfied.");
+
+
+                        //check for getlastlocation methode from radhas code
 
                         //noinspection MissingPermission
                         if (ActivityCompat.checkSelfPermission(RoutTrackActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -433,8 +448,8 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
             //   mRequestingLocationUpdates = false;
 
 
-           // System.out.println("mCurrentLocation.getLatitude() = " + mCurrentLocation.getLatitude());
-         //   System.out.println("mCurrentLocation.getLongitude() = " + mCurrentLocation.getLongitude());
+            // System.out.println("mCurrentLocation.getLatitude() = " + mCurrentLocation.getLatitude());
+            //   System.out.println("mCurrentLocation.getLongitude() = " + mCurrentLocation.getLongitude());
             mMap.clear();
 
 
@@ -445,15 +460,28 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
             if (coordPrevious != null && coordNext != null) {
 
+                currentTime = System.currentTimeMillis();
+                time = currentTime - lastTime;
                 distanceBetweenCoord = coordPrevious.distanceTo(coordNext);
+
+                //  if (time>5000){
+                speed = distanceBetweenCoord / (time/1000);
+                lastTime = currentTime;
+
+
+                // }
+
                 distance = distance + distanceBetweenCoord;
+
+
 //                Toast.makeText(RoutTrackActivity.this, "Distance Covered:"
 //                                + new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))
 //                                +" meters", Toast.LENGTH_SHORT).show();
 
-
+                speedCovered.setText(String.format("Speed :%s m/s"
+                        , new DecimalFormat("##.##").format(Constant.getFloatAsDouble(speed))));
                 distCovered.setText(String.format("Distance Covered:%s meters"
-                                    , new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))));
+                        , new DecimalFormat("##.##").format(Constant.getFloatAsDouble(distance))));
 
                 coordPrevious = coordNext;
             }
@@ -502,26 +530,25 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
     private void redrawLine() {
 
 
-
-            mMap.clear();  //clears all Markers and Polylines
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mMap.setMyLocationEnabled(true);
-            PolylineOptions options = new PolylineOptions().width(15).color(polyLineColor).geodesic(true);
-            for (int i = 0; i < points.size(); i++) {
-                LatLng point = points.get(i);
-                options.add(point);
-            }
-            // addMarker(); //add Marker in current position
-            line = mMap.addPolyline(options); //add Polyline
+        mMap.clear();  //clears all Markers and Polylines
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        PolylineOptions options = new PolylineOptions().width(15).color(polyLineColor).geodesic(true);
+        for (int i = 0; i < points.size(); i++) {
+            LatLng point = points.get(i);
+            options.add(point);
+        }
+        // addMarker(); //add Marker in current position
+        line = mMap.addPolyline(options); //add Polyline
 
 
     }
@@ -601,10 +628,10 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                     long diffHours = diff / (60 * 60 * 1000) % 24;
                     long diffDays = diff / (24 * 60 * 60 * 1000);
 
-                  //  System.out.print(diffDays + " days, ");
-                  //  System.out.print(diffHours + " hours, ");
-                  //  System.out.print(diffMinutes + " minutes, ");
-                  //  System.out.print(diffSeconds + " seconds.");
+                    //  System.out.print(diffDays + " days, ");
+                    //  System.out.print(diffHours + " hours, ");
+                    //  System.out.print(diffMinutes + " minutes, ");
+                    //  System.out.print(diffSeconds + " seconds.");
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -618,7 +645,18 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
 
                 redrawLine();
-                System.out.println(points.size());
+
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RoutTrackActivity.this);
+                alertDialogBuilder.setMessage(R.string.stop_route).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        finish();
+                        dialog.dismiss();
+                    }
+
+                }).show();
+                //  System.out.println(points.size());
 
             }
         });

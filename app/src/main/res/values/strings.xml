@@ -34,4 +34,10 @@
         To enable access, go to Settings > Data protection > Location services and turn on Location access for Homecheck.</string>
     <string name="ok">OK</string>
     <string name="title_activity_saved_route">Map</string>
+
+    <string name="deletemg">Are you sure you want to delete Route?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="stop_route">Route tracking stopped</string>
+    <string name="no_route">Route Not long enough</string>
 </resources>

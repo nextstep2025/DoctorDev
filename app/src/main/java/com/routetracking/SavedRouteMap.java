@@ -1,6 +1,8 @@
 package com.routetracking;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -35,6 +37,7 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
     private LatLngBounds.Builder builder;
     private SupportMapFragment mapFragment;
     private int polyLineColor;
+    private boolean noRoute = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
         savedMapPoints = new ArrayList<>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-         mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -59,22 +62,29 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
         routeId = getIntent().getLongExtra("route_id", 0);
         builder = new LatLngBounds.Builder();
         List<Coordinates> lat = Coordinates.findWithQuery(Coordinates.class
-                                 , "Select ID,LATITUDE,LONGITUDE from COORDINATES where ROUTEID = ? ORDER BY ID"
-                                 , Long.toString(routeId));
+                , "Select ID,LATITUDE,LONGITUDE from COORDINATES where ROUTEID = ? ORDER BY ID"
+                , Long.toString(routeId));
 
-      //  System.out.println(lat.get(0));
+        //  System.out.println(lat.get(0));
 
-        for (int i = 0; i < lat.size(); i++) {
-            LatLng loca = new LatLng(lat.get(i).getLatitude(), lat.get(i).getLongitude());
+        if (lat.size()>0) {
 
-            savedMapPoints.add(loca);
-            builder.include(loca);
+            for (int i = 0; i < lat.size(); i++) {
+                LatLng loca = new LatLng(lat.get(i).getLatitude(), lat.get(i).getLongitude());
 
+                savedMapPoints.add(loca);
+                builder.include(loca);
+
+
+            }
+        }else{
+
+            noRoute = true;
 
         }
 
-       /// System.out.println("routeId = " + routeId);
-       // System.out.println("savedpoly"+savedMapPoints.get(0).latitude);
+        /// System.out.println("routeId = " + routeId);
+        // System.out.println("savedpoly"+savedMapPoints.get(0).latitude);
     }
 
 
@@ -103,34 +113,61 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
             return;
         }
 
-        LatLngBounds bounds = builder.build();
-        DisplayMetrics mapFragDisplayMetrics = mapFragment.getResources().getDisplayMetrics();
-        int width = mapFragDisplayMetrics.widthPixels;
-        int height = mapFragDisplayMetrics.heightPixels;
-        int padding = (int) (width * 0.08); // offset from edges of the map 12% of screen
 
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+        if (!noRoute) {
+            LatLngBounds bounds = builder.build();
+            DisplayMetrics mapFragDisplayMetrics = mapFragment.getResources().getDisplayMetrics();
+            int width = mapFragDisplayMetrics.widthPixels;
+            int height = mapFragDisplayMetrics.heightPixels;
+            int padding = (int) (width * 0.08); // offset from edges of the map 12% of screen
 
-        mMap.setMyLocationEnabled(true);
-        PolylineOptions options = new PolylineOptions().width(15).color(polyLineColor).geodesic(true);
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-        googleMap.addMarker(new MarkerOptions()
-                .position(savedMapPoints.get(0))
-                .draggable(false)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
+            mMap.setMyLocationEnabled(true);
+            PolylineOptions options = new PolylineOptions().width(15).color(polyLineColor).geodesic(true);
 
+            googleMap.addMarker(new MarkerOptions()
+                    .position(savedMapPoints.get(0))
+                    .draggable(false)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
 
-        googleMap.addMarker(new MarkerOptions()
-                .position(savedMapPoints.get(savedMapPoints.size()-1))
-                .draggable(false)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end)));
-        //   for (int i = 0; i < savedMapPoints.size(); i++) {
-           // LatLng point = savedMapPoints.get(i);
-            options.addAll(savedMapPoints);
-      //  }
-        savedLine = mMap.addPolyline(options); //add Polyline
+            if (savedMapPoints.size() > 0) {
+                googleMap.addMarker(new MarkerOptions()
+                        .position(savedMapPoints.get(savedMapPoints.size() - 1))
+                        .draggable(false)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.end)));
+                //   for (int i = 0; i < savedMapPoints.size(); i++) {
+                // LatLng point = savedMapPoints.get(i);
+                options.addAll(savedMapPoints);
 
-        mMap.moveCamera(cu);
-        mMap.animateCamera(cu);
+                savedLine = mMap.addPolyline(options); //add Polyline
+
+                mMap.moveCamera(cu);
+                mMap.animateCamera(cu);
+            } else {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SavedRouteMap.this);
+                alertDialogBuilder.setMessage(R.string.no_route).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        finish();
+                        dialog.dismiss();
+                    }
+
+                }).show();
+            }
+
+        }else{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SavedRouteMap.this);
+            alertDialogBuilder.setMessage(R.string.no_route).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                    dialog.dismiss();
+                }
+
+            }).show();
+        }
+        //  }
+
     }
 }
