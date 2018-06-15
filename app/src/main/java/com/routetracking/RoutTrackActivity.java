@@ -20,7 +20,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -142,7 +141,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
         routeId = getIntent().getLongExtra("route_id", 0);
 
-        System.out.println("routeId = " + routeId);
+     //   System.out.println("routeId = " + routeId);
 
         startTrack = findViewById(R.id.start_track);
         stopTrack = findViewById(R.id.stop_track);
@@ -434,8 +433,8 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
             //   mRequestingLocationUpdates = false;
 
 
-            System.out.println("mCurrentLocation.getLatitude() = " + mCurrentLocation.getLatitude());
-            System.out.println("mCurrentLocation.getLongitude() = " + mCurrentLocation.getLongitude());
+           // System.out.println("mCurrentLocation.getLatitude() = " + mCurrentLocation.getLatitude());
+         //   System.out.println("mCurrentLocation.getLongitude() = " + mCurrentLocation.getLongitude());
             mMap.clear();
 
 
@@ -602,10 +601,10 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
                     long diffHours = diff / (60 * 60 * 1000) % 24;
                     long diffDays = diff / (24 * 60 * 60 * 1000);
 
-                    System.out.print(diffDays + " days, ");
-                    System.out.print(diffHours + " hours, ");
-                    System.out.print(diffMinutes + " minutes, ");
-                    System.out.print(diffSeconds + " seconds.");
+                  //  System.out.print(diffDays + " days, ");
+                  //  System.out.print(diffHours + " hours, ");
+                  //  System.out.print(diffMinutes + " minutes, ");
+                  //  System.out.print(diffSeconds + " seconds.");
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -681,7 +680,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
         // System.out.println("lat"+location.getLatitude());
         // System.out.println("long"+location.getLongitude());
 
-        Toast.makeText(this, "lat" + location.getLatitude() + "long" + location.getLongitude(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "lat" + location.getLatitude() + "long" + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

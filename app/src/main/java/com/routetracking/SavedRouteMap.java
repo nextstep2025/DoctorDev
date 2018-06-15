@@ -15,8 +15,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.routetracking.POJO.Coordinates;
@@ -46,7 +48,7 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
             polyLineColor = ContextCompat.getColor(this, R.color.colorPrimary);
         }
 
-        savedMapPoints = new ArrayList<LatLng>();
+        savedMapPoints = new ArrayList<>();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
          mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -60,7 +62,7 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
                                  , "Select ID,LATITUDE,LONGITUDE from COORDINATES where ROUTEID = ? ORDER BY ID"
                                  , Long.toString(routeId));
 
-        System.out.println(lat.get(0));
+      //  System.out.println(lat.get(0));
 
         for (int i = 0; i < lat.size(); i++) {
             LatLng loca = new LatLng(lat.get(i).getLatitude(), lat.get(i).getLongitude());
@@ -71,8 +73,8 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
 
         }
 
-        System.out.println("routeId = " + routeId);
-        System.out.println("savedpoly"+savedMapPoints.get(0).latitude);
+       /// System.out.println("routeId = " + routeId);
+       // System.out.println("savedpoly"+savedMapPoints.get(0).latitude);
     }
 
 
@@ -112,7 +114,17 @@ public class SavedRouteMap extends FragmentActivity implements OnMapReadyCallbac
         mMap.setMyLocationEnabled(true);
         PolylineOptions options = new PolylineOptions().width(15).color(polyLineColor).geodesic(true);
 
-     //   for (int i = 0; i < savedMapPoints.size(); i++) {
+        googleMap.addMarker(new MarkerOptions()
+                .position(savedMapPoints.get(0))
+                .draggable(false)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
+
+
+        googleMap.addMarker(new MarkerOptions()
+                .position(savedMapPoints.get(savedMapPoints.size()-1))
+                .draggable(false)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.end)));
+        //   for (int i = 0; i < savedMapPoints.size(); i++) {
            // LatLng point = savedMapPoints.get(i);
             options.addAll(savedMapPoints);
       //  }
