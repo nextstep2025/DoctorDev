@@ -470,7 +470,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
 
 
                 // }
-
+//
                 distance = distance + distanceBetweenCoord;
 
 
