@@ -103,7 +103,7 @@ public class RoutTrackActivity extends FragmentActivity implements OnMapReadyCal
      * Stores parameters for requests to the FusedLocationProviderApi.
      */
     private LocationRequest mLocationRequest;
-
+//
     /**
      * Stores the types of location services the client is interested in using. Used for checking
      * settings to determine if the device has optimal location settings.
